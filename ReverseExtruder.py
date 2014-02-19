@@ -3,6 +3,7 @@
 #Help:ReverseExtruder
 #Depend: GCode
 #Type: postprocess
+#Param: temperature(float:50) Temperature of the hot-end
 
 ## Written by TV productions info@tv-productions.org
 ## This script is licensed under the GPLv3
@@ -34,6 +35,9 @@ comment = ''
 
 with open(filename, 'w') as g:
     for line in lines:
+        if getValue(line, 'M', None) == 109:
+            line = 'M109 T0 S%f\n' % (temperature)
+        
         if getValue(line, 'G', None) == 1:
             x = getValue(line, 'X', dx)
             y = getValue(line, 'Y', dy)
@@ -68,7 +72,7 @@ with open(filename, 'w') as g:
                 line += comment + '\n'
                 
                 # if comment is the extruder movements before and after the print, remove that line
-                if comment == ";extrude 3mm of feed stock" or comment == ";retract the filament a bit before lifting the nozzle, to release some of the pressure":
+                if comment == ";retract the filament a bit before lifting the nozzle, to release some of the pressure":
                     line = ";ReverseExtruder: Removed '" + comment + "'\n"
                 dx = x
                 dy = y
