@@ -1,8 +1,8 @@
-# Name:Reverse Extruder direction
-# Info:Reverses the direction of the extruder. You can edit the extrude amount by the Flow setting.
-# Help:ReverseExtruder
-# Depend: GCode
-# Type: postprocess
+#Name:Reverse Extruder direction
+#Info:Reverses the direction of the extruder. You can edit the extrude amount by the Flow setting.
+#Help:ReverseExtruder
+#Depend: GCode
+#Type: postprocess
 
 ## Written by TV productions info@tv-productions.org
 ## This script is licensed under the GPLv3
@@ -44,7 +44,11 @@ with open(filename, 'w') as g:
                 c = line.find(';')
                 if -1 != c:
                     comment = line[c:].strip()
-
+                
+                # Remove another extruder move
+                if comment == ";move Z up a bit and retract filament even more":
+                    e = de
+                
                 line = 'G1 '
                 if dx != x:
                     line += 'X%f ' % x
@@ -62,6 +66,10 @@ with open(filename, 'w') as g:
                 # add comment if needed
 
                 line += comment + '\n'
+                
+                # if comment is the extruder movements before and after the print, remove that line
+                if comment == ";extrude 3mm of feed stock" or comment == ";retract the filament a bit before lifting the nozzle, to release some of the pressure":
+                    line = ";ReverseExtruder: Removed '" + comment + "'\n"
                 dx = x
                 dy = y
                 dz = z
