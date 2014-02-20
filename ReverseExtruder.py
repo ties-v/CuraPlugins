@@ -4,6 +4,7 @@
 #Depend: GCode
 #Type: postprocess
 #Param: temperature(float:50) Temperature of the hot-end
+#Param: hotindex(float:0) Hot-end index (starting at 0)
 
 ## Written by TV productions info@tv-productions.org
 ## This script is licensed under the GPLv3
@@ -36,7 +37,7 @@ comment = ''
 with open(filename, 'w') as g:
     for line in lines:
         if getValue(line, 'M', None) == 109:
-            line = 'M109 T0 S%f\n' % (temperature)
+            line = 'M109 T% S%f\n' % (hotindex, temperature)
         
         if getValue(line, 'G', None) == 1:
             x = getValue(line, 'X', dx)
